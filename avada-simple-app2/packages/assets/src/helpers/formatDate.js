@@ -1,7 +1,6 @@
-export function formatDate(createdAt) {
-  const date = new Date(createdAt._seconds * 1000 + createdAt._nanoseconds / 1000000).toString();
+export function formatDate(date) {
 
   let arrDay = [];
-  arrDay = date.split(' ');
+  arrDay = date.split('T')[0].split('-');
   return arrDay;
 }

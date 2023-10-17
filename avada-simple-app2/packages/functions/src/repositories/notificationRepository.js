@@ -1,4 +1,5 @@
-import { Firestore } from '@google-cloud/firestore';
+import {Firestore} from '@google-cloud/firestore';
+import moment from 'moment';
 
 /**
  * @documentation
@@ -14,31 +15,78 @@ const collection = firestore.collection('notifications');
  * @param {string} id
  * @returns {Object}
  */
-export async function getSampleRepoById(id) {
-  try {
-    const doc = await collection.doc(id).get();
-    if (!doc.exists) {
-      return null;
-    }
-
-    return { id: doc.id, ...doc.data() };
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
-}
 
 export async function getListNotifications() {
   try {
     const querySnapshot = await collection.orderBy('createdAt', 'DESC').get();
-    const result = querySnapshot.docs.map((doc) => ({
+    const result = querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
+      createdAt: doc.data().createdAt.toDate(),
+      updatedAt: doc.data().updatedAt.toDate()
     }));
 
     return result;
   } catch (e) {
     console.error(e);
-    return null;
+    return [];
   }
+}
+
+export async function syncOrdersToNotifications(orders) {
+  const result = orders.map(async order => {
+    await collection.add(order);
+  });
+  await Promise.all(result);
+}
+
+export async function getNotificationItem({shopify, orderData, shopId, shopifyDomain}) {
+  const order = await collection
+    .where('orderId', '==', orderData.id)
+    .limit(1)
+    .get();
+  if (!order.empty) {
+    return;
+  }
+  const result = await getProduct(shopify, orderData.line_items[0].product_id);
+
+  return {
+    orderId: orderData.id,
+    createdAt: new Date(orderData.created_at),
+    updatedAt: new Date(orderData.updated_at),
+    firstName: orderData.customer.first_name,
+    city: orderData.billing_address.city,
+    country: orderData.billing_address.country,
+    productName: orderData.line_items[0].name,
+    productImage: result.image.src,
+    productId: orderData.line_items[0].product_id,
+    shopId,
+    shopifyDomain
+  };
+}
+
+export async function addNotification(data) {
+  await collection.add(data);
+}
+
+export async function getProduct(shopify, productId) {
+  return await shopify.product.get(productId);
+}
+
+export async function getNotificationsByDomain(shopifyDomain) {
+  const querySnapshot = await collection.where('shopifyDomain', '==', shopifyDomain).get();
+  const datas = querySnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      timestamp: `${moment(data.createdAt.toDate()).fromNow()} `,
+      country: data.country,
+      firstName: data.firstName,
+      productId: data.productId,
+      city: data.city,
+      productName: data.productName,
+      productImage: data.productImage
+    };
+  });
+  return datas;
 }

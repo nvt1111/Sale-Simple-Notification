@@ -7,22 +7,35 @@ import {
   RangeSlider,
   Stack,
   Tabs,
-  TextField, Select, Frame, Loading
+  TextField,
+  Select,
+  SkeletonPage,
+  SkeletonBodyText,
+  TextContainer,
+  SkeletonDisplayText
 } from '@shopify/polaris';
-import React, {useState, useCallback, useEffect} from 'react';
-import '../../styles/components/notification/setting.scss'
-import DesktopPositionInput from '../../components/DesktopPositionInput/DesktopPositionInput'
+import React, {useState} from 'react';
+import '../../styles/components/notification/setting.scss';
+import DesktopPositionInput from '../../components/DesktopPositionInput/DesktopPositionInput';
 import NotificationPopup from '../../components/NotificationPopup/NotificationPopup';
-import useFetchApi from '../../hooks/api/useFetchApi'
-import defaultSettings from '@avada/functions/src/const/defaultSetting/defaultSetting'
-import {api} from "@assets/helpers";
-import useEditApi from "@assets/hooks/api/useEditApi";
+import useFetchApi from '../../hooks/api/useFetchApi';
+import defaultSettings from '@functions/const/defaultSettings';
+import useEditApi from '@assets/hooks/api/useEditApi';
 
 export default function Settings() {
   const [selected, setSelected] = useState(0);
-  const {data: input, setData: setInput, loading, setLoading} = useFetchApi({url: '/settings', defaultSettings});
-
-  const handleTabChange = (selectedTabIndex) => setSelected(selectedTabIndex);
+  const {data: input, setData: setInput, loading, setLoading} = useFetchApi({
+    url: '/settings',
+    defaultSettings
+  });
+  const handleInputChange = (key, value) => {
+    // /  cô san
+    setInput(prevInput => ({
+      ...prevInput,
+      [key]: value
+    }));
+  };
+  const handleTabChange = selectedTabIndex => setSelected(selectedTabIndex);
 
   const items = [
     {
@@ -45,15 +58,8 @@ export default function Settings() {
     {label: 'Top right', value: 'top-right'}
   ];
 
-  const handleInputChange = (key, value) => {
-    setInput(prevInput => ({
-      ...prevInput,
-      [key]: value
-    }))
-  }
-
-  const {editing, handleEdit} = useEditApi({url: '/settings'})
-  const saveSetting = async (input) => {
+  const {handleEdit} = useEditApi({url: '/settings'});
+  const saveSetting = async () => {
     setLoading(true);
     try {
       await handleEdit(input);
@@ -62,7 +68,7 @@ export default function Settings() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   const tabs = [
     {
@@ -70,7 +76,13 @@ export default function Settings() {
       content: 'Display',
       accessibilityLabel: 'Appearance',
       panelID: 'panel1',
-      body: <DisplaySetting handleInputChange={handleInputChange} defaultOptions={defaultOptions} input={input}/>
+      body: (
+        <DisplaySetting
+          handleInputChange={handleInputChange}
+          defaultOptions={defaultOptions}
+          input={input}
+        />
+      )
     },
     {
       id: '2',
@@ -84,18 +96,16 @@ export default function Settings() {
     <Page
       fullWidth
       title="Settings"
-      subtitle='Decide how your notification will display'
+      subtitle="Decide how your notification will display"
       primaryAction={{
         content: 'Save',
-        onAction() {
-          saveSetting(input)
-        }
-      }}>
-      {loading && <LoadingSpinner/>}
+        onAction: saveSetting
+      }}
+    >
+      {loading && <Skeleton/>}
       {!loading && (
         <Layout>
           <Layout.Section secondary>
-
             {items.map((item, index) => (
               <NotificationPopup
                 key={index}
@@ -114,8 +124,8 @@ export default function Settings() {
           <Layout.Section sectioned>
             <Card>
               <Tabs tabs={tabs} selected={selected} onSelect={handleTabChange}>
+                {tabs[selected].body}
               </Tabs>
-              {tabs[selected].body}
             </Card>
           </Layout.Section>
         </Layout>
@@ -126,18 +136,18 @@ export default function Settings() {
 
 const TriggerSetting = ({handleInputChange, input}) => {
   return (
-    < Card.Section title="PAGES RESTICTION">
+    <Card.Section title="PAGES RESTICTION">
       <FormLayout>
         <Select
           labelHidden
           label="Collection rule type"
           options={['Specific pages', 'All pages']}
           value={input.allowShow === 'all' ? 'All pages' : 'Specific pages'}
-          onChange={(value) => {
+          onChange={value => {
             if (value === 'Specific pages') {
-              handleInputChange('allowShow', 'specific')
+              handleInputChange('allowShow', 'specific');
             } else {
-              handleInputChange('allowShow', 'all')
+              handleInputChange('allowShow', 'all');
             }
           }}
         />
@@ -161,41 +171,42 @@ const TriggerSetting = ({handleInputChange, input}) => {
         )}
       </FormLayout>
     </Card.Section>
-  )
-}
+  );
+};
 
 const DisplaySetting = ({handleInputChange, defaultOptions, input}) => {
   return (
     <>
       <Card.Section title="Appearence">
-        <Stack distribution='leading'>
-          <DesktopPositionInput label='Desktop Position' onChange={handleInputChange}
-                                helpText={`The display position of the ${input.position} on your website`}
-                                options={defaultOptions} position={input.position}/>
+        <Stack distribution="leading">
+          <DesktopPositionInput
+            label="Desktop Position"
+            onChange={handleInputChange}
+            helpText={`The display position of the ${input.position} on your website`}
+            options={defaultOptions}
+            position={input.position}
+          />
         </Stack>
         <br></br>
-        <Stack distribution='leading' vertical>
+        <Stack distribution="leading" vertical>
           <Checkbox
             label="Hide time ago"
             checked={input.hideTimeAgo}
-            onChange={(value) => {
-              handleInputChange('hideTimeAgo', value)
-            }
-            }
+            onChange={value => {
+              handleInputChange('hideTimeAgo', value);
+            }}
           />
 
           <Checkbox
             label="Truncate content text"
             checked={input.truncateProductName}
-            onChange={(value) =>
-              handleInputChange('truncateProductName', value)
-            }
+            onChange={value => handleInputChange('truncateProductName', value)}
             helpText="If your product name is long for one line, it will be truncated 'Product na=..' "
           />
         </Stack>
       </Card.Section>
 
-      <Card.Section title='TIMING'>
+      <Card.Section title="TIMING">
         <FormLayout>
           <FormLayout.Group>
             <RangeSlider
@@ -205,13 +216,14 @@ const DisplaySetting = ({handleInputChange, defaultOptions, input}) => {
               min={0}
               max={100}
               value={input.displayDuration || 0}
-              onChange={(value) => handleInputChange('displayDuration', value)}
+              onChange={value => handleInputChange('displayDuration', value)}
               suffix={
                 <TextField
-                  value={input.displayDuration && (String(input.displayDuration))}
-                  onChange={(value) => handleInputChange('displayDuration', value)}
-                  suffix='second(s)'
-                />}
+                  value={input.displayDuration && String(input.displayDuration)}
+                  onChange={value => handleInputChange('displayDuration', value)}
+                  suffix="second(s)"
+                />
+              }
             />
             <RangeSlider
               helpText="How long each pop will display on your app"
@@ -220,15 +232,17 @@ const DisplaySetting = ({handleInputChange, defaultOptions, input}) => {
               min={0}
               max={100}
               value={input.firstDelay || 0}
-              onChange={(value) => handleInputChange('firstDelay', value)}
+              onChange={value => handleInputChange('firstDelay', value)}
               suffix={
                 <TextField
-                  value={input.firstDelay && (input.firstDelay > 100 ? '100' : String(input.firstDelay))}
-                  onChange={(value) => handleInputChange('firstDelay', value)}
-                  suffix='second(s)'
-                />}
+                  value={
+                    input.firstDelay && (input.firstDelay > 100 ? '100' : String(input.firstDelay))
+                  }
+                  onChange={value => handleInputChange('firstDelay', value)}
+                  suffix="second(s)"
+                />
+              }
             />
-
           </FormLayout.Group>
           <FormLayout.Group>
             <RangeSlider
@@ -238,13 +252,17 @@ const DisplaySetting = ({handleInputChange, defaultOptions, input}) => {
               min={0}
               max={100}
               value={input.popsInterval || 0}
-              onChange={(value) => handleInputChange('popsInterval', value)}
+              onChange={value => handleInputChange('popsInterval', value)}
               suffix={
                 <TextField
-                  value={input.popsInterval && (input.popsInterval > 100 ? '100' : String(input.popsInterval))}
-                  onChange={(value) => handleInputChange('popsInterval', value)}
-                  suffix='second(s)'
-                />}
+                  value={
+                    input.popsInterval &&
+                    (input.popsInterval > 100 ? '100' : String(input.popsInterval))
+                  }
+                  onChange={value => handleInputChange('popsInterval', value)}
+                  suffix="second(s)"
+                />
+              }
             />
 
             <RangeSlider
@@ -254,29 +272,75 @@ const DisplaySetting = ({handleInputChange, defaultOptions, input}) => {
               min={0}
               max={100}
               value={input.maxPopsDisplay || 0}
-              onChange={(value) => handleInputChange('maxPopsDisplay', value)}
+              onChange={value => handleInputChange('maxPopsDisplay', value)}
               suffix={
                 <TextField
-                  value={input.maxPopsDisplay && (input.maxPopsDisplay > 100 ? () => {
-                    return
-                  } : String(input.maxPopsDisplay))}
-                  onChange={(value) => handleInputChange('maxPopsDisplay', value)}
-                  suffix='second(s)'
-                />}
+                  value={
+                    input.maxPopsDisplay &&
+                    (input.maxPopsDisplay > 100
+                      ? () => {
+                        return;
+                      }
+                      : String(input.maxPopsDisplay))
+                  }
+                  onChange={value => handleInputChange('maxPopsDisplay', value)}
+                  suffix="second(s)"
+                />
+              }
             />
           </FormLayout.Group>
         </FormLayout>
       </Card.Section>
     </>
-  )
-}
-
-const LoadingSpinner = () => {
-  return (
-    <div style={{height: '100px'}}>
-      <Frame>
-        <Loading/>
-      </Frame>
-    </div>
   );
-}
+};
+
+const Skeleton = () => {
+  return (
+    <SkeletonPage primaryAction>
+      <Layout>
+        <Layout.Section>
+          <Card sectioned>
+            <SkeletonBodyText/>
+          </Card>
+          <Card sectioned>
+            <TextContainer>
+              <SkeletonDisplayText size="small"/>
+              <SkeletonBodyText/>
+            </TextContainer>
+          </Card>
+          <Card sectioned>
+            <TextContainer>
+              <SkeletonDisplayText size="small"/>
+              <SkeletonBodyText/>
+            </TextContainer>
+          </Card>
+        </Layout.Section>
+        <Layout.Section variant="oneThird">
+          <Card>
+            <Card.Section>
+              <TextContainer>
+                <SkeletonDisplayText size="small"/>
+                <SkeletonBodyText lines={2}/>
+              </TextContainer>
+            </Card.Section>
+            <Card.Section>
+              <SkeletonBodyText lines={1}/>
+            </Card.Section>
+          </Card>
+          <Card subdued>
+            <Card.Section>
+              <TextContainer>
+                <SkeletonDisplayText size="small"/>
+                <SkeletonBodyText lines={2}/>
+              </TextContainer>
+            </Card.Section>
+            <Card.Section>
+              <SkeletonBodyText lines={2}/>
+            </Card.Section>
+          </Card>
+        </Layout.Section>
+      </Layout>
+    </SkeletonPage>
+  );
+};

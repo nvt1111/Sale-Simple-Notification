@@ -2,7 +2,7 @@
 
 name = "Avada-second-app"
 client_id = "7eeb87c781133327bca9e4e87a6ad03d"
-application_url = "https://blind-meyer-rules-bones.trycloudflare.com/auth/shopify"
+application_url = "https://rg-usb-during-blow.trycloudflare.com/auth/shopify"
 embedded = true
 
 [access_scopes]
@@ -11,9 +11,9 @@ use_legacy_install_flow = true
 
 [auth]
 redirect_urls = [
-  "https://blind-meyer-rules-bones.trycloudflare.com/auth/shopify/callback",
-  "https://blind-meyer-rules-bones.trycloudflare.com/authSa/shopify/callback",
-  "https://blind-meyer-rules-bones.trycloudflare.com/auth/shopify/embed/callback",
+  "https://rg-usb-during-blow.trycloudflare.com/auth/shopify/callback",
+  "https://rg-usb-during-blow.trycloudflare.com/authSa/shopify/callback",
+  "https://rg-usb-during-blow.trycloudflare.com/auth/shopify/embed/callback",
   "https://localhost:3000/auth/shopify/callback",
   "https://localhost:3000/authSa/shopify/callback",
   "https://localhost:3000/auth/shopify/embed/callback"

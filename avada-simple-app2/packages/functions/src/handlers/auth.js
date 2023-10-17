@@ -7,6 +7,8 @@ import path from 'path';
 import createErrorHandler from '@functions/middleware/errorHandler';
 import firebase from 'firebase-admin';
 import appConfig from '@functions/config/app';
+import {syncOrdersToNotifications} from '@functions/repositories/notificationRepository';
+import {afterInstallService} from '@functions/services/afterInstallService';
 
 if (firebase.apps.length === 0) {
   firebase.initializeApp();
@@ -49,10 +51,7 @@ app.use(
         success: true
       });
     },
-      // afterLogin:(ctx) => {
-      //   const shopifyDomain = ctx.state.shopify.shop;
-      //     console.log(shopifyDomain);
-      // }
+    afterLogin: afterInstallService
   }).routes()
 );
 

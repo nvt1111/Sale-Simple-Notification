@@ -1,4 +1,5 @@
 import {Firestore} from '@google-cloud/firestore';
+import defaultSettings from '@functions/const/defaultSettings';
 
 /**
  * @documentation
@@ -11,37 +12,29 @@ const firestore = new Firestore();
 const collection = firestore.collection('settings');
 
 export async function getSetting(shopId) {
-  try {
+  const settingDocs = await collection
+    .where('shopId', '==', shopId)
+    .limit(1)
+    .get();
+  if (settingDocs.empty) return {};
+  const settingDoc = settingDocs.docs[0];
 
-    const settingDocs = await collection
-      .where('shopId', '==', shopId)
-      .limit(1)
-      .get()
-    if (settingDocs.empty) {
-      return null;
-    }
-    const settingDoc = settingDocs.docs[0];
-
-    return {
-      id: settingDoc.id,
-      ...settingDoc.data()
-    }
-
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
+  return {
+    id: settingDoc.id,
+    ...settingDoc.data(),
+    createdAt: settingDoc.data().createdAt.toDate(),
+    updatedAt: settingDoc.data().updatedAt.toDate()
+  };
 }
 
 export async function updateSetting(updateData) {
-  try {
-    const settingDoc = await collection
-        .doc(updateData.id)
-        .update({...updateData})
+  const {id, ...data} = updateData;
+  await collection.doc(id).update({
+    ...data,
+    updatedAt: new Date()
+  });
+}
 
-    return settingDoc.docs[0];
-  } catch (e) {
-    console.error(e);
-    return null;
-  }
+export async function createDefaultSettings(shopId, shopifyDomain) {
+  await collection.add({...defaultSettings, shopId, shopifyDomain});
 }

@@ -8,14 +8,14 @@ import {
   Layout,
   Pagination
 } from '@shopify/polaris';
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import NotificationPopup from '../../components/NotificationPopup/NotificationPopup';
-import { formatDate } from '../../helpers/formatDate';
-import '../../styles/components/notification/notification.scss'
-import useFetchApi from '../../hooks/api/useFetchApi'
+import {formatDate} from '../../helpers/formatDate';
+import '../../styles/components/notification/notification.scss';
+import useFetchApi from '../../hooks/api/useFetchApi';
 
 export default function Notifications() {
-  const { data: items, setData: setItems } = useFetchApi({ url: '/notifications' });
+  const {data: items, setData: setItems} = useFetchApi({url: '/notifications'});
   const [selectedItems, setSelectedItems] = useState([]);
   const [sortValue, setSortValue] = useState('DATE_MODIFIED_DESC');
 
@@ -23,7 +23,8 @@ export default function Notifications() {
     singular: 'notification',
     plural: 'notifications'
   };
-  const settings = { hideTimeAgo: false, truncateProductName: false }
+
+  const settings = {hideTimeAgo: false, truncateProductName: false};
   const promotedBulkActions = [
     {
       content: 'Edit customers',
@@ -59,17 +60,9 @@ export default function Notifications() {
               promotedBulkActions={promotedBulkActions}
               bulkActions={bulkActions}
               renderItem={item => {
-                const {
-                  id,
-                  firstName,
-                  city,
-                  country,
-                  productName,
-                  createdAt,
-                  productImage
-                } = item;
+                const {id, firstName, city, country, productName, createdAt, productImage} = item;
                 return (
-                  <ResourceItem id={id} accessibilityLabel={`View details for ${name}`}>
+                  <ResourceItem id={id} accessibilityLabel={`View details for ${firstName}`}>
                     <Stack distribution="equalSpacing">
                       <NotificationPopup
                         id={id}
@@ -86,7 +79,7 @@ export default function Notifications() {
                           From {formatDate(createdAt)[1]} {formatDate(createdAt)[2]},{' '}
                         </div>
                         <Stack distribution="trailing">
-                          <div>{formatDate(createdAt)[3]}</div>
+                          <div>{formatDate(createdAt)[0]}</div>
                         </Stack>
                       </TextStyle>
                     </Stack>
@@ -95,8 +88,8 @@ export default function Notifications() {
               }}
               sortValue={sortValue}
               sortOptions={[
-                { label: 'Newest update', value: 'DATE_MODIFIED_DESC' },
-                { label: 'Oldest update', value: 'DATE_MODIFIED_ASC' }
+                {label: 'Newest update', value: 'DATE_MODIFIED_DESC'},
+                {label: 'Oldest update', value: 'DATE_MODIFIED_ASC'}
               ]}
               onSortChange={selected => {
                 setSortValue(selected);

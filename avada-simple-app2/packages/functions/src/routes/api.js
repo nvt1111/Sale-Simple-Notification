@@ -5,19 +5,15 @@ import * as subscriptionController from '@functions/controllers/subscriptionCont
 import * as appNewsController from '@functions/controllers/appNewsController';
 import {getApiPrefix} from '@functions/const/app';
 import * as settingController from '@functions/controllers/settingController';
-// import {getSettingShop, updateSettingShop} from "@functions/controllers/settingController";
-// import {verifyRequest} from "@avada/shopify-auth";
-// import * as sampleController from "@functions/controllers/sampleController";
-// import exampleAction from "@functions/controllers/sampleController";
+import * as sampleController from '@functions/controllers/sampleController';
 
 export default function apiRouter(isEmbed = false) {
   const router = new Router({prefix: getApiPrefix(isEmbed)});
 
-
   router.get('/shops', shopController.getUserShops);
   router.get('/subscription', subscriptionController.getSubscription);
   router.get('/appNews', appNewsController.getList);
-  // router.get('/samples', sampleController.exampleAction);
+  router.get('/samples', sampleController.exampleAction);
   router.get('/settings', settingController.getSettingShop);
   router.put('/settings', settingController.updateSettingShop);
 
