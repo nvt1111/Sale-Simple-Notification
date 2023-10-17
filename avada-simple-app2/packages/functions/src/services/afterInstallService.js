@@ -24,7 +24,7 @@ export async function afterInstallService(ctx) {
       })
     ),
     createDefaultSettings(shopId, shopifyDomain),
-    registerWebhook(shopify)
-    // registerScriptTag(shopify)
+    registerWebhook(shopify),
+    registerScriptTag(shopify)
   ]);
 }
