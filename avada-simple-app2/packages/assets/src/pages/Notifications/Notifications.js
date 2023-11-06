@@ -1,13 +1,4 @@
-import {
-  Card,
-  ResourceList,
-  ResourceItem,
-  TextStyle,
-  Page,
-  Stack,
-  Layout,
-  Pagination
-} from '@shopify/polaris';
+import {Card, Layout, Page, Pagination, ResourceItem, ResourceList, Stack, TextStyle} from '@shopify/polaris';
 import React, {useState} from 'react';
 import NotificationPopup from '../../components/NotificationPopup/NotificationPopup';
 import {formatDate} from '../../helpers/formatDate';
@@ -15,15 +6,15 @@ import '../../styles/components/notification/notification.scss';
 import useFetchApi from '../../hooks/api/useFetchApi';
 
 export default function Notifications() {
-  const {data: items, setData: setItems} = useFetchApi({url: '/notifications'});
+  const {data: items} = useFetchApi({url: '/notifications', initQueries: {sortValue: 'DESC'}});
   const [selectedItems, setSelectedItems] = useState([]);
-  const [sortValue, setSortValue] = useState('DATE_MODIFIED_DESC');
+  const [sortValue, setSortValue] = useState('DESC');
 
   const resourceName = {
     singular: 'notification',
     plural: 'notifications'
   };
-
+  // const handleSort
   const settings = {hideTimeAgo: false, truncateProductName: false};
   const promotedBulkActions = [
     {
@@ -88,8 +79,8 @@ export default function Notifications() {
               }}
               sortValue={sortValue}
               sortOptions={[
-                {label: 'Newest update', value: 'DATE_MODIFIED_DESC'},
-                {label: 'Oldest update', value: 'DATE_MODIFIED_ASC'}
+                {label: 'Newest update', value: 'DESC'},
+                {label: 'Oldest update', value: 'ASC'}
               ]}
               onSortChange={selected => {
                 setSortValue(selected);

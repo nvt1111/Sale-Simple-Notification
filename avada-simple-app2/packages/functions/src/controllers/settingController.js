@@ -1,6 +1,5 @@
 import {getSetting, updateSetting} from '../repositories/settingRepository';
 import {getCurrentShop} from '@functions/helpers/auth';
-import formatDate from '../const/formatDate';
 
 export async function getSettingShop(ctx) {
   try {

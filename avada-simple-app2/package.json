@@ -14,7 +14,7 @@
     "emulators": "firebase emulators:start",
     "predeploy": "yarn workspace @avada/assets run production && yarn workspace @avada/functions run production",
     "eslint-fix": "npm --prefix packages/assets/ run eslint-fix && npm --prefix packages/functions/ run eslint-fix",
-    "start-dev-embed": "npm run timeout && echo 'backend build running...' && concurrently \"yarn workspace @avada/functions run watch\"",
+    "start-dev-embed": "npm run timeout && echo 'backend build running...' && concurrently \"yarn workspace @avada/functions run watch\" \"yarn workspace @avada/scripttag run webpack-watch \"",
     "start-dev": "concurrently \"yarn workspace @avada/assets run watch\" \"yarn workspace @avada/functions run watch\"",
     "dev": "shopify app dev --skip-dependencies-installation",
     "dev-reset": "shopify app dev --skip-dependencies-installation --reset",
@@ -44,7 +44,6 @@
     "@avada/shopify-app": "3.48.1",
     "@avada/shopify-cli": "3.48.0",
     "concurrently": "^7.6.0",
-    "koa-cors": "^0.0.16",
     "shopify-api-node": "^3.12.6"
   }
 }

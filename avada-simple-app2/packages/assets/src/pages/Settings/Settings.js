@@ -5,14 +5,14 @@ import {
   Layout,
   Page,
   RangeSlider,
+  Select,
+  SkeletonBodyText,
+  SkeletonDisplayText,
+  SkeletonPage,
   Stack,
   Tabs,
-  TextField,
-  Select,
-  SkeletonPage,
-  SkeletonBodyText,
   TextContainer,
-  SkeletonDisplayText
+  TextField
 } from '@shopify/polaris';
 import React, {useState} from 'react';
 import '../../styles/components/notification/setting.scss';
@@ -29,12 +29,12 @@ export default function Settings() {
     defaultSettings
   });
   const handleInputChange = (key, value) => {
-    // /  cô san
     setInput(prevInput => ({
       ...prevInput,
       [key]: value
     }));
   };
+  // const {input1, handleInputChange} = useInput(input);
   const handleTabChange = selectedTabIndex => setSelected(selectedTabIndex);
 
   const items = [
@@ -226,7 +226,7 @@ const DisplaySetting = ({handleInputChange, defaultOptions, input}) => {
               }
             />
             <RangeSlider
-              helpText="How long each pop will display on your app"
+              helpText="The delay time before the first notification"
               output
               label="Time before the first pop"
               min={0}
@@ -246,7 +246,7 @@ const DisplaySetting = ({handleInputChange, defaultOptions, input}) => {
           </FormLayout.Group>
           <FormLayout.Group>
             <RangeSlider
-              helpText="How long each pop will display on your app"
+              helpText="The time interval between two popup notifications"
               output
               label="Gap time between two pops"
               min={0}
@@ -266,7 +266,7 @@ const DisplaySetting = ({handleInputChange, defaultOptions, input}) => {
             />
 
             <RangeSlider
-              helpText="How long each pop will display on your app"
+              helpText="The maxium number of popups are allow to show after page loading. Maximum number is "
               output
               label="Maximum of popups"
               min={0}

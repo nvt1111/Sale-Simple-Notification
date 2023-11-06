@@ -50,7 +50,7 @@ app.use(
         success: true
       });
     },
-    afterLogin: afterInstallService
+    afterInstall: afterInstallService
   }).routes()
 );
 

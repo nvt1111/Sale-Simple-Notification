@@ -28,9 +28,10 @@ export async function getSetting(shopId) {
 }
 
 export async function updateSetting(updateData) {
-  const {id, ...data} = updateData;
+  const {id, createdAt, ...data} = updateData;
   await collection.doc(id).update({
     ...data,
+    createdAt: new Date(createdAt),
     updatedAt: new Date()
   });
 }

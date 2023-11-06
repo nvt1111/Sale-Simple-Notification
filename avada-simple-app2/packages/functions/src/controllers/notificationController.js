@@ -2,7 +2,8 @@ import {getListNotifications} from '../repositories/notificationRepository';
 
 export async function getNotifications(ctx) {
   try {
-    const data = await getListNotifications();
+    const {sortValue} = ctx.query;
+    const data = await getListNotifications(sortValue);
 
     ctx.body = {data, success: true};
   } catch (e) {

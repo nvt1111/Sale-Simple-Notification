@@ -5,7 +5,6 @@ import Shopify from 'shopify-api-node';
 import {prepareOrdersFromShopify} from '@functions/helpers/prepareOrdersFromShopify';
 import {createDefaultSettings} from '@functions/repositories/settingRepository';
 import registerWebhook from '@functions/helpers/afterInstall/registerWebhook';
-import registerScriptTag from '@functions/helpers/afterInstall/registerScriptTag';
 
 export async function afterInstallService(ctx) {
   const shopifyDomain = ctx.state.shopify.shop;
@@ -24,7 +23,7 @@ export async function afterInstallService(ctx) {
       })
     ),
     createDefaultSettings(shopId, shopifyDomain),
-    registerWebhook(shopify),
-    registerScriptTag(shopify)
+    registerWebhook(shopify)
+    // registerScriptTag(shopify)
   ]);
 }

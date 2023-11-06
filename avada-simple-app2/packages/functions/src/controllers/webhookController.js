@@ -3,7 +3,6 @@ import {getShopByShopifyDomain} from '@avada/shopify-auth';
 import {addNotification, getNotificationItem} from '@functions/repositories/notificationRepository';
 
 export async function listenNewOrder(ctx) {
-  console.log('in sssssssssssssssssssssssssssssss');
   try {
     const shopifyDomain = ctx.get('X-Shopify-Shop-Domain');
     const orderData = ctx.req.body;
@@ -20,7 +19,9 @@ export async function listenNewOrder(ctx) {
       shopId: shop.id,
       shopifyDomain
     });
-    console.log('in râaaaaaaaaaaaaaaaaaaaaaaaaa', notification);
+    if (!notification) {
+      throw new Error('notification is empty');
+    }
     await addNotification(notification);
 
     return (ctx.body = {

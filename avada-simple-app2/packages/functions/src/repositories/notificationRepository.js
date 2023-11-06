@@ -16,17 +16,16 @@ const collection = firestore.collection('notifications');
  * @returns {Object}
  */
 
-export async function getListNotifications() {
+export async function getListNotifications(sortValue) {
   try {
-    const querySnapshot = await collection.orderBy('createdAt', 'DESC').get();
-    const result = querySnapshot.docs.map(doc => ({
+    const querySnapshot = await collection.orderBy('createdAt', sortValue).get();
+
+    return querySnapshot.docs.map(doc => ({
       id: doc.id,
       ...doc.data(),
       createdAt: doc.data().createdAt.toDate(),
       updatedAt: doc.data().updatedAt.toDate()
     }));
-
-    return result;
   } catch (e) {
     console.error(e);
     return [];

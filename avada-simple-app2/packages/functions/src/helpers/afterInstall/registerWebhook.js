@@ -10,7 +10,7 @@ const registerWebhook = async shopify => {
   // });
 
   const listWebhooks = await shopify.webhook.list();
-  // await shopify.webhook.delete(1095965474899);
+  // await shopify.webhook.delete(186054279251);
   console.log('List webhook register', listWebhooks);
 };
 export default registerWebhook;
